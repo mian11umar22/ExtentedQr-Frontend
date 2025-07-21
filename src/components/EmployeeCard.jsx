@@ -36,31 +36,36 @@ export default function EmployeeCard({ setSelectedEmployees }) {
   };
 
   // Handle Add Employee
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const newEmployee = {
-      Name: formData.get("name"),
-      Department: formData.get("department"),
-      Email: formData.get("email"),
-    };
+ const handleSubmit = async (e) => {
+   e.preventDefault();
+   const formData = new FormData(e.target);
+   const newEmployee = {
+     Name: formData.get("name"),
+     Department: formData.get("department"),
+     Email: formData.get("email"),
+   };
 
-    try {
-      const response = await fetch("http://localhost:3000/employee/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newEmployee),
-      });
+   try {
+     const response = await fetch(
+       "https://extentedqr-backend-production.up.railway.app/employee/create",
+       {
+         method: "POST",
+         headers: { "Content-Type": "application/json" },
+         body: JSON.stringify(newEmployee),
+       }
+     );
 
-      if (!response.ok) throw new Error("Failed to create employee");
+     if (!response.ok) throw new Error("Failed to create employee");
 
-      setEmp((prev) => [...prev, newEmployee]);
-      e.target.reset();
-      setShowForm(false);
-    } catch (error) {
-      console.error("Error submitting form:", error.message);
-    }
-  };
+     const result = await response.json(); // 👈 get the saved employee from response
+     setEmp((prev) => [...prev, result.data]); // 👈 add full saved employee object
+     e.target.reset();
+     setShowForm(false);
+   } catch (error) {
+     console.error("Error submitting form:", error.message);
+   }
+ };
+
 
   return (
     <div className="w-full md:w-1/2 p-4">

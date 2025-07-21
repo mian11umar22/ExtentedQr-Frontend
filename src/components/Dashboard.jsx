@@ -9,38 +9,39 @@ export default function Dashboard() {
 
   const totalPages = selectedEmployees.length * templateInfo.pages;
 
- const handleGenerate = async () => {
-   if (!templateInfo.template) {
-     toast.error("Please select a template before generating.");
-     return;
-   }
+  const handleGenerate = async () => {
+    if (!templateInfo.template) {
+      toast.error("Please select a template before generating.");
+      return;
+    }
 
-   const loadingToast = toast.loading("Generating QR codes...");
-   try {
-     const response = await fetch(
-       "https://extentedqr-backend-production.up.railway.app/qr/generate",
-       {
-         method: "POST",
-         headers: {
-           "Content-Type": "application/json",
-         },
-         body: JSON.stringify({
-           employeeIds: selectedEmployees.map((emp) => emp._id),
-           pagesPerEmployee: templateInfo.pages,
-           templateType: templateInfo.template,
-         }),
-       }
-     );
+    const loadingToast = toast.loading("Generating QR codes...");
+    try {
+      const response = await fetch(
+        "https://extentedqr-backend-production.up.railway.app/qr/generate",
 
-     if (!response.ok) throw new Error("Failed to generate QR codes");
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            employeeIds: selectedEmployees.map((emp) => emp._id),
+            pagesPerEmployee: templateInfo.pages,
+            templateType: templateInfo.template,
+          }),
+        }
+      );
 
-     const { files } = await response.json();
-     toast.success(`${files.length} QR codes added!`, { id: loadingToast });
-   } catch (error) {
-     console.error("Error generating QR codes:", error);
-     toast.error("Failed to generate QR codes.", { id: loadingToast });
-   }
- };
+      if (!response.ok) throw new Error("Failed to generate QR codes");
+
+      const { files } = await response.json();
+      toast.success(`${files.length} QR codes added!`, { id: loadingToast });
+    } catch (error) {
+      console.error("Error generating QR codes:", error);
+      toast.error("Failed to generate QR codes.", { id: loadingToast });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-tr from-blue-50 to-gray-100 p-8">
